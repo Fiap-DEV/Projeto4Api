@@ -1,67 +1,53 @@
-//DECLARAÇÕES DOS ELEMENTOS HTML PARA O DOM 
+// DECLARAÇÕES DOS ELEMENTOS
 const videoElemento = document.getElementById("video");
-const botaoScanear= document.getElementById("btn-texto");
+const botaoScanear = document.getElementById("btn-texto");
 const resultado = document.getElementById("saida");
 const canvas = document.getElementById("canvas");
 
-//METÓDO LIGAR CÂMERA
-
-async function configurarCamera(){
-    try{
-        //solicita a permissão para acesar a camera do usuario
-        const midia= await navigator.mediaDevices.getUserMedia({
-            //habilita a camera traseira do celular
-            video:{ facingMode:"enviroment"}, 
-            audio:false
+async function configurarCamera() {
+    try {
+        const midia = await navigator.mediaDevices.getUserMedia({
+            // Corrigido "enviroment" para "environment"
+            video: { facingMode: "environment" }, 
+            audio: false
         });
-        //atribui o fluxo da camera ao elemento de 
-        // video para visualizar
         videoElemento.srcObject = midia;
-    }catch(erro){
-        resultado.innerText="Erro ao acessar a câmera",erro;
+        // Importante: garantir que o vídeo comece a tocar
+        videoElemento.play();
+    } catch (erro) {
+        resultado.innerText = "Erro ao acessar a câmera: " + erro.message;
     }
 }
 
-//executa a função para habilitar camera
 configurarCamera();
 
-//CAPTURAR E LER O TEXTO
-
-botaoScanear.onclick =async()=>{
-    //DESATIVA O BOTAO PARA EVITAR MULTIPLOS CLIQUES
+botaoScanear.onclick = async () => {
     botaoScanear.disabled = true;
-    resultado.innerText ="fazendo a leitura...aguarde";
+    resultado.innerText = "Fazendo a leitura... aguarde";
 
-    //captura a imagem(foto)
     const contexto = canvas.getContext("2d");
 
-    //Ajusta o tamanho do canvas interno para ser igual 
-    // a do video
+    // Ajusta o tamanho do canvas
     canvas.width = videoElemento.videoWidth;
     canvas.height = videoElemento.videoHeight;
 
-    //desenha o frame atual 
-    // do video dentro do canvas(tira a foto)
-    contexto.drawImage(videoElemento,0,0,canvas,canvas.height);
+    // Tira a foto
+    contexto.drawImage(videoElemento, 0, 0, canvas.width, canvas.height);
 
-    //processando com a api Tesseract
-    try{
-        //função do tesserect
-        const {data:{text}}= await Tesseract.recognize(
-            canvas, //a imagem que acabou de capturar
-            'por', // idioma em portugues
-            {looger: m=>console.log(m)} //mostra no log
-        )
-        resultado.innerText = text.trim().length > 0 ? text : "Não foi possivel identificar o texto";
+    try {
+        // CORREÇÃO AQUI: 
+        // Removido o logger de dentro do recognize para evitar o DataCloneError
+        const { data: { text } } = await Tesseract.recognize(
+            canvas,
+            'por'
+        );
 
-    }catch(erro){
-        //resultado caso apresente um erro
-        resultado.innerText="Erro no processamento",erro.message;
+        resultado.innerText = text.trim().length > 0 ? text : "Não foi possível identificar o texto";
+
+    } catch (erro) {
+        console.error(erro);
+        resultado.innerText = "Erro no processamento: " + erro.message;
+    } finally {
+        botaoScanear.disabled = false;
     }
-    finally{
-        //habilita o botão para uma nova leitura
-        botaoScanear.disabled=false;
-    }
-
-
-}
+};
