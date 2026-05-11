@@ -12,7 +12,7 @@ async function configurarCamera() {
             audio: false
         });
         videoElemento.srcObject = midia;
-        // Importante: garantir que o vídeo comece a tocar
+        //garantir que o vídeo comece a tocar
         videoElemento.play();
     } catch (erro) {
         resultado.innerText = "Erro ao acessar a câmera: " + erro.message;
@@ -34,7 +34,7 @@ botaoScanear.onclick = async () => {
     // Resetamos qualquer transformação para garantir que a foto não saia invertida
     contexto.setTransform(1, 0, 0, 1, 0, 0);
 
-    // MELHORIA DE OCR:
+  
     // Aplica um leve filtro de contraste e escala de cinza no canvas antes de tirar a "foto"
     // Isso ajuda MUITO a evitar as letras aleatórias
     contexto.filter = 'contrast(1.2) grayscale(1)';
@@ -43,7 +43,7 @@ botaoScanear.onclick = async () => {
     contexto.drawImage(videoElemento, 0, 0, canvas.width, canvas.height);
 
     try {
-        // CORREÇÃO AQUI: 
+       
         // Removido o logger de dentro do recognize para evitar o DataCloneError
         const { data: { text } } = await Tesseract.recognize(
             canvas,
