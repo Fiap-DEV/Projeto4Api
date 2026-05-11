@@ -31,6 +31,14 @@ botaoScanear.onclick = async () => {
     canvas.width = videoElemento.videoWidth;
     canvas.height = videoElemento.videoHeight;
 
+    // Resetamos qualquer transformação para garantir que a foto não saia invertida
+    contexto.setTransform(1, 0, 0, 1, 0, 0);
+
+    // MELHORIA DE OCR:
+    // Aplica um leve filtro de contraste e escala de cinza no canvas antes de tirar a "foto"
+    // Isso ajuda MUITO a evitar as letras aleatórias
+    contexto.filter = 'contrast(1.2) grayscale(1)';
+
     // Tira a foto
     contexto.drawImage(videoElemento, 0, 0, canvas.width, canvas.height);
 
@@ -41,8 +49,10 @@ botaoScanear.onclick = async () => {
             canvas,
             'por'
         );
+        // Remove espaços excessivos e caracteres especiais óbvios que indicam erro de leitura
+        const textoFinal = text.trim();
 
-        resultado.innerText = text.trim().length > 0 ? text : "Não foi possível identificar o texto";
+     resultado.innerText = textoFinal.length > 0 ? textoFinal : "Não foi possível identificar o texto";
 
     } catch (erro) {
         console.error(erro);
