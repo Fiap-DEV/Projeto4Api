@@ -20,39 +20,40 @@ async function configurarCamera() {
 }
 
 configurarCamera();
-
 botaoScanear.onclick = async () => {
     botaoScanear.disabled = true;
     resultado.innerText = "Fazendo a leitura... aguarde";
 
     const contexto = canvas.getContext("2d");
 
-    // Ajusta o tamanho do canvas
+    // Ajusta o tamanho do canvas para o tamanho real do vídeo
     canvas.width = videoElemento.videoWidth;
     canvas.height = videoElemento.videoHeight;
 
-    // Resetamos qualquer transformação para garantir que a foto não saia invertida
+    // Limpa e garante que a orientação seja a padrão (não espelhada)
     contexto.setTransform(1, 0, 0, 1, 0, 0);
+    
+    // Se você notar que o Tesseract está recebendo a imagem invertida, 
+    // você pode descomentar as duas linhas abaixo para inverter o Canvas manualmente:
+    /*
+    contexto.translate(canvas.width, 0);
+    contexto.scale(-1, 1);
+    */
 
-  
-    // Aplica um leve filtro de contraste e escala de cinza no canvas antes de tirar a "foto"
-    // Isso ajuda MUITO a evitar as letras aleatórias
+    // Aplica os filtros para melhorar o OCR
     contexto.filter = 'contrast(1.2) grayscale(1)';
 
-    // Tira a foto
+    // Desenha o vídeo no canvas
     contexto.drawImage(videoElemento, 0, 0, canvas.width, canvas.height);
 
     try {
-       
-        // Removido o logger de dentro do recognize para evitar o DataCloneError
         const { data: { text } } = await Tesseract.recognize(
             canvas,
             'por'
         );
-        // Remove espaços excessivos e caracteres especiais óbvios que indicam erro de leitura
+        
         const textoFinal = text.trim();
-
-     resultado.innerText = textoFinal.length > 0 ? textoFinal : "Não foi possível identificar o texto";
+        resultado.innerText = textoFinal.length > 0 ? textoFinal : "Não foi possível identificar o texto";
 
     } catch (erro) {
         console.error(erro);

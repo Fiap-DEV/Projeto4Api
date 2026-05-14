@@ -59,7 +59,8 @@ main{
     color:var(--color1);
     margin-bottom:20px;
     /*espelha  a camera para parecer um espelho*/
-    transform:scaleX(-1);
+    /* transform:scaleX(-1); */
+    transform: scaleX(1);
 }
 #btn-texto{
     background:var(--bgColor2);
@@ -81,10 +82,10 @@ main{
     background:var(--bgColor1);
     padding:20px;
     border-radius:10px;
-    border-left: 5px solid blue;
+    border-left: 5px solid blue; /*cor da linha a esquerda*/
     min-height:100px;
     text-align:left;
-    word-wrap:break-word;
+    word-wrap:break-word;/*espaçamento entre Palavras*/
     color:var(--color2);
 }
 footer p{
