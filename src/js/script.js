@@ -7,7 +7,6 @@ const canvas = document.getElementById("canvas");
 async function configurarCamera() {
     try {
         const midia = await navigator.mediaDevices.getUserMedia({
-            // Corrigido "enviroment" para "environment"
             video: { facingMode: "environment" }, 
             audio: false
         });
@@ -35,10 +34,7 @@ botaoScanear.onclick = async () => {
     
     // Se você notar que o Tesseract está recebendo a imagem invertida, 
     // você pode descomentar as duas linhas abaixo para inverter o Canvas manualmente:
-    /*
-    contexto.translate(canvas.width, 0);
-    contexto.scale(-1, 1);
-    */
+
 
     // Aplica os filtros para melhorar o OCR
     contexto.filter = 'contrast(1.2) grayscale(1)';

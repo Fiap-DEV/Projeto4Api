@@ -59,7 +59,6 @@ main{
     color:var(--color1);
     margin-bottom:20px;
     /*espelha  a camera para parecer um espelho*/
-    /* transform:scaleX(-1); */
     transform: scaleX(1);
 }
 #btn-texto{
